@@ -15,7 +15,8 @@ namespace OdeToFood.Data
         }
         public void Delete(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            _context.Restaurants.Remove(restaurant);
+            _context.SaveChanges();
         }
 
         public IReadOnlyList<Restaurant> GetAll()
@@ -25,17 +26,24 @@ namespace OdeToFood.Data
 
         public Restaurant GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.Restaurants.Find(id);
         }
 
         public Restaurant Create(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            _context.Restaurants.Add(restaurant);
+            _context.SaveChanges();
+            return restaurant;
         }
 
         public Restaurant Update(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            _context.Restaurants.Update(restaurant);
+            _context.SaveChanges();
+            return restaurant;
+
         }
+
+        
     }
 }

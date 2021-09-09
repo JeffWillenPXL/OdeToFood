@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OdeToFood.Data;
 using OdeToFood.Data.DomainClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OdeToFood.Web.Controllers.Api
 {
@@ -13,7 +8,7 @@ namespace OdeToFood.Web.Controllers.Api
     [ApiController]
     public class RestaurantController : ControllerBase
     {
-        private IRestaurantRepository _restaurantRepository;
+        private readonly IRestaurantRepository _restaurantRepository;
 
         public RestaurantController(IRestaurantRepository restaurantRepository)
         {
@@ -27,7 +22,7 @@ namespace OdeToFood.Web.Controllers.Api
             return Ok(restaurants);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
             var restaurant = _restaurantRepository.GetById(id);
@@ -37,6 +32,52 @@ namespace OdeToFood.Web.Controllers.Api
                 
             }
             return NotFound();
+        }
+        [HttpPost]
+        public IActionResult Post([FromBody] Restaurant restaurant)
+        {
+            if (ModelState.IsValid)
+            {
+                var model = _restaurantRepository.Create(restaurant);
+                return CreatedAtAction(nameof(Get), new { model.Id }, model);
+            }
+            return BadRequest();
+
+
+        }
+
+
+        [HttpPut("{id}")]
+        public IActionResult Put([FromBody] Restaurant restaurant, int id)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if (_restaurantRepository.GetById(id) == null)
+            {
+                return NotFound();
+            }
+            if (restaurant.Id != id)
+            {
+                return BadRequest();
+            }
+            
+
+            _restaurantRepository.Update(restaurant);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var restaurant = _restaurantRepository.GetById(id);
+            if (restaurant == null)
+            {
+                return NotFound();
+            }
+            _restaurantRepository.Delete(restaurant);
+            return Ok();
         }
     }
 }
